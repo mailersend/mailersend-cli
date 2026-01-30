@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:developers.mailersend.com)",
+      "Bash(go build:*)",
+      "Bash(go run:*)",
+      "Bash(go vet:*)",
+      "Bash(/tmp/mailersend-cli:*)",
+      "Bash(go test:*)",
+      "Bash(ls:*)",
+      "Bash(./mailersend-cli:*)",
+      "Bash(for cmd in quota recipient identity suppression inbound token user smtp bulk-email sms)",
+      "Bash(do echo \"=== $cmd ===\")",
+      "Bash(done)"
+    ]
+  }
+}
