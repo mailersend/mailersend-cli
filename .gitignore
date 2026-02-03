@@ -1,0 +1,23 @@
+# Binaries
+mailersend-cli
+mailersend
+*.exe
+
+# GoReleaser
+dist/
+
+# Test artifacts
+test_results.txt
+test_all_results.txt
+
+# Editor files
+.idea/
+.vscode/
+.claude/settings.local.json
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.direnv

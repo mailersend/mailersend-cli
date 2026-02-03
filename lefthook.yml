@@ -1,0 +1,8 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      run: golangci-lint run --fix
+      stage_fixed: true
+    build:
+      run: go build ./...
