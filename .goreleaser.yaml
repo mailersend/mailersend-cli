@@ -52,6 +52,6 @@ homebrew_casks:
     directory: Casks
     repository:
       owner: mailersend
-      name: mailersend-cli
+      name: homebrew-tap
       branch: main
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
