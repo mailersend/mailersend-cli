@@ -10,4 +10,4 @@ if [ "$OS" != "darwin" ]; then
   exit 0
 fi
 
-quill sign-and-notarize "$BINARY" --dry-run="$IS_SNAPSHOT" --ad-hoc="$IS_SNAPSHOT" -vv
+quill sign-and-notarize "$BINARY" --dry-run="$IS_SNAPSHOT" --ad-hoc="$IS_SNAPSHOT"
