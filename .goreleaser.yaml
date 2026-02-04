@@ -21,6 +21,10 @@ builds:
       - -X github.com/mailersend/mailersend-cli/cmd.version={{.Version}}
       - -X github.com/mailersend/mailersend-cli/cmd.commit={{.ShortCommit}}
       - -X github.com/mailersend/mailersend-cli/cmd.date={{.Date}}
+    hooks:
+      post:
+        - cmd: ./scripts/sign-macos.sh "{{ .Os }}" "{{ .Path }}" "{{ .IsSnapshot }}"
+          output: true
 
 archives:
   - id: default
