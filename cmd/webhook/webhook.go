@@ -57,12 +57,14 @@ func init() {
 	createCmd.Flags().String("domain", "", "domain name or ID (required)")
 	createCmd.Flags().StringSlice("events", nil, "webhook events (required)")
 	createCmd.Flags().Bool("enabled", true, "whether the webhook is enabled")
+	createCmd.Flags().Int("version", 2, "webhook payload version (1=legacy, 2=recommended)")
 
 	// update flags
 	updateCmd.Flags().String("name", "", "webhook name")
 	updateCmd.Flags().String("url", "", "webhook URL")
 	updateCmd.Flags().StringSlice("events", nil, "webhook events")
 	updateCmd.Flags().Bool("enabled", true, "whether the webhook is enabled")
+	updateCmd.Flags().Int("version", 0, "webhook payload version (1 or 2)")
 }
 
 // --- list ---
@@ -214,6 +216,7 @@ func runCreate(c *cobra.Command, args []string) error {
 		return err
 	}
 	enabled, _ := c.Flags().GetBool("enabled")
+	version, _ := c.Flags().GetInt("version")
 
 	ctx := context.Background()
 	opts := &mailersend.CreateWebhookOptions{
@@ -222,6 +225,7 @@ func runCreate(c *cobra.Command, args []string) error {
 		URL:      url,
 		Enabled:  mailersend.Bool(enabled),
 		Events:   events,
+		Version:  mailersend.Int(version),
 	}
 
 	result, _, err := ms.Webhook.Create(ctx, opts)
@@ -272,6 +276,10 @@ func runUpdate(c *cobra.Command, args []string) error {
 	if c.Flags().Changed("enabled") {
 		enabled, _ := c.Flags().GetBool("enabled")
 		opts.Enabled = mailersend.Bool(enabled)
+	}
+	if c.Flags().Changed("version") {
+		version, _ := c.Flags().GetInt("version")
+		opts.Version = mailersend.Int(version)
 	}
 
 	ctx := context.Background()
