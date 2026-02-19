@@ -47,7 +47,7 @@ func init() {
 }
 
 func runList(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func runList(cobraCmd *cobra.Command, args []string) error {
 			Limit: perPage,
 		})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, limit)
@@ -104,7 +104,7 @@ var getCmd = &cobra.Command{
 }
 
 func runGet(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func runGet(cobraCmd *cobra.Command, args []string) error {
 	messageID := args[0]
 	result, _, err := ms.Message.Get(ctx, messageID)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(cobraCmd) {
@@ -162,7 +162,7 @@ var scheduledListCmd = &cobra.Command{
 }
 
 func runScheduledList(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -172,7 +172,7 @@ func runScheduledList(cobraCmd *cobra.Command, args []string) error {
 	status, _ := flags.GetString("status")
 	domainID, _ := flags.GetString("domain")
 	if domainID != "" {
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -188,7 +188,7 @@ func runScheduledList(cobraCmd *cobra.Command, args []string) error {
 			Limit:    perPage,
 		})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, limit)
@@ -226,7 +226,7 @@ var scheduledGetCmd = &cobra.Command{
 }
 
 func runScheduledGet(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func runScheduledGet(cobraCmd *cobra.Command, args []string) error {
 	messageID := args[0]
 	result, _, err := ms.ScheduleMessage.Get(ctx, messageID)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(cobraCmd) {
@@ -276,7 +276,7 @@ var scheduledDeleteCmd = &cobra.Command{
 }
 
 func runScheduledDelete(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -285,7 +285,7 @@ func runScheduledDelete(cobraCmd *cobra.Command, args []string) error {
 	messageID := args[0]
 	_, err = ms.ScheduleMessage.Delete(ctx, messageID)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(cobraCmd) {

@@ -40,11 +40,10 @@ func SetVersion(v string) {
 
 // NewSDKClient creates a mailersend-go SDK client with CLI-specific behavior
 // injected via a custom HTTP transport (retry, verbose, user-agent, base URL).
-// Returns both the SDK client and the transport (needed for error body access).
-func NewSDKClient(cmd *cobra.Command) (*mailersend.Mailersend, *sdkclient.CLITransport, error) {
+func NewSDKClient(cmd *cobra.Command) (*mailersend.Mailersend, error) {
 	token, err := config.GetToken(ProfileFlag(cmd))
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	transport := &sdkclient.CLITransport{
@@ -62,13 +61,13 @@ func NewSDKClient(cmd *cobra.Command) (*mailersend.Mailersend, *sdkclient.CLITra
 		Transport: transport,
 	})
 
-	return ms, transport, nil
+	return ms, nil
 }
 
 // ResolveDomainSDK takes a value that is either a domain ID or a domain name
 // (hostname). If it contains a dot, it's treated as a hostname and resolved
 // to a domain ID by listing domains from the API. Otherwise it's returned as-is.
-func ResolveDomainSDK(ms *mailersend.Mailersend, transport *sdkclient.CLITransport, idOrName string) (string, error) {
+func ResolveDomainSDK(ms *mailersend.Mailersend, idOrName string) (string, error) {
 	if !strings.Contains(idOrName, ".") {
 		return idOrName, nil
 	}
@@ -77,7 +76,7 @@ func ResolveDomainSDK(ms *mailersend.Mailersend, transport *sdkclient.CLITranspo
 	domains, err := sdkclient.FetchAll(ctx, func(ctx context.Context, page, perPage int) ([]mailersend.Domain, bool, error) {
 		root, _, err := ms.Domain.List(ctx, &mailersend.ListDomainOptions{Page: page, Limit: perPage})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, 0)
@@ -98,7 +97,7 @@ func ResolveDomainSDK(ms *mailersend.Mailersend, transport *sdkclient.CLITranspo
 // name (hostname) and always returns the domain name. If the input contains a
 // dot it is treated as a hostname and returned as-is. Otherwise, the ID is
 // resolved to a domain name by listing domains from the API.
-func ResolveDomainNameSDK(ms *mailersend.Mailersend, transport *sdkclient.CLITransport, idOrName string) (string, error) {
+func ResolveDomainNameSDK(ms *mailersend.Mailersend, idOrName string) (string, error) {
 	if strings.Contains(idOrName, ".") {
 		return idOrName, nil
 	}
@@ -107,7 +106,7 @@ func ResolveDomainNameSDK(ms *mailersend.Mailersend, transport *sdkclient.CLITra
 	domains, err := sdkclient.FetchAll(ctx, func(ctx context.Context, page, perPage int) ([]mailersend.Domain, bool, error) {
 		root, _, err := ms.Domain.List(ctx, &mailersend.ListDomainOptions{Page: page, Limit: perPage})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, 0)

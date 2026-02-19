@@ -27,8 +27,8 @@ func check(ok bool) string {
 
 // DomainsView displays the list of domains.
 type DomainsView struct {
-	client        *mailersend.Mailersend
-	transport     *sdkclient.CLITransport
+	client *mailersend.Mailersend
+
 	table         components.Table
 	detail        components.DetailPanel
 	domains       []mailersend.Domain
@@ -41,7 +41,7 @@ type DomainsView struct {
 }
 
 // NewDomainsView creates a new domains view.
-func NewDomainsView(client *mailersend.Mailersend, transport *sdkclient.CLITransport) DomainsView {
+func NewDomainsView(client *mailersend.Mailersend) DomainsView {
 	columns := []components.Column{
 		{Title: "NAME", Width: 30},
 		{Title: "VERIFIED", Width: 10},
@@ -53,17 +53,17 @@ func NewDomainsView(client *mailersend.Mailersend, transport *sdkclient.CLITrans
 	table.SetEmptyMessage("No domains found. Add a domain to get started.")
 
 	return DomainsView{
-		client:    client,
-		transport: transport,
-		table:     table,
-		loading:   true,
+		client: client,
+
+		table:   table,
+		loading: true,
 	}
 }
 
 // SetClient updates the SDK client (for profile switching).
-func (v *DomainsView) SetClient(client *mailersend.Mailersend, transport *sdkclient.CLITransport) {
+func (v *DomainsView) SetClient(client *mailersend.Mailersend) {
 	v.client = client
-	v.transport = transport
+
 }
 
 // SetSize sets the view dimensions.
@@ -119,7 +119,7 @@ func (v DomainsView) Fetch() tea.Cmd {
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(v.transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, 100)

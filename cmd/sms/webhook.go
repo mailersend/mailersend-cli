@@ -42,7 +42,7 @@ var webhookListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS webhooks",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -58,7 +58,7 @@ var webhookListCmd = &cobra.Command{
 			SmsNumberId: smsNumberID,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -81,7 +81,7 @@ var webhookGetCmd = &cobra.Command{
 	Short: "Get SMS webhook details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -89,7 +89,7 @@ var webhookGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsWebhook.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -120,7 +120,7 @@ var webhookCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an SMS webhook",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -156,7 +156,7 @@ var webhookCreateCmd = &cobra.Command{
 			Enabled:     mailersend.Bool(enabled),
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -173,7 +173,7 @@ var webhookUpdateCmd = &cobra.Command{
 	Short: "Update an SMS webhook",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -202,7 +202,7 @@ var webhookUpdateCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsWebhook.Update(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -219,7 +219,7 @@ var webhookDeleteCmd = &cobra.Command{
 	Short: "Delete an SMS webhook",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -227,7 +227,7 @@ var webhookDeleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.SmsWebhook.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("SMS webhook " + args[0] + " deleted successfully.")

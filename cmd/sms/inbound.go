@@ -46,7 +46,7 @@ var inboundListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS inbound routes",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -69,7 +69,7 @@ var inboundListCmd = &cobra.Command{
 				Limit:       perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -97,7 +97,7 @@ var inboundGetCmd = &cobra.Command{
 	Short: "Get SMS inbound route details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -105,7 +105,7 @@ var inboundGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsInbound.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -129,7 +129,7 @@ var inboundCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an SMS inbound route",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -170,7 +170,7 @@ var inboundCreateCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsInbound.Create(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -187,7 +187,7 @@ var inboundUpdateCmd = &cobra.Command{
 	Short: "Update an SMS inbound route",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -224,7 +224,7 @@ var inboundUpdateCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsInbound.Update(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -241,7 +241,7 @@ var inboundDeleteCmd = &cobra.Command{
 	Short: "Delete an SMS inbound route",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -249,7 +249,7 @@ var inboundDeleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.SmsInbound.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("SMS inbound route " + args[0] + " deleted successfully.")

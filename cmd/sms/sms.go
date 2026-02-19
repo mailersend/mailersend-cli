@@ -34,7 +34,7 @@ var sendCmd = &cobra.Command{
 	Use:   "send",
 	Short: "Send an SMS",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ var sendCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.Sms.Send(ctx, smsMsg)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

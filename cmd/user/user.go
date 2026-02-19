@@ -55,7 +55,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List account users",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -69,7 +69,7 @@ var listCmd = &cobra.Command{
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -97,7 +97,7 @@ var getCmd = &cobra.Command{
 	Short: "Get user details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -105,7 +105,7 @@ var getCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.User.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -135,7 +135,7 @@ var inviteCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Invite a new user",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -167,7 +167,7 @@ var inviteCreateCmd = &cobra.Command{
 		}
 
 		ctx := context.Background()
-		body, err := doRawRequest(ms, transport, ctx, http.MethodPost, "https://api.mailersend.com/v1/users", payload)
+		body, err := doRawRequest(ms, ctx, http.MethodPost, "https://api.mailersend.com/v1/users", payload)
 		if err != nil {
 			return err
 		}
@@ -190,7 +190,7 @@ var inviteListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List pending invites",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -200,7 +200,7 @@ var inviteListCmd = &cobra.Command{
 		ctx := context.Background()
 		items, err := sdkclient.FetchAll(ctx, func(ctx context.Context, page, perPage int) ([]inviteItem, bool, error) {
 			url := fmt.Sprintf("https://api.mailersend.com/v1/invites?page=%d&limit=%d", page, perPage)
-			body, err := doRawRequest(ms, transport, ctx, http.MethodGet, url, nil)
+			body, err := doRawRequest(ms, ctx, http.MethodGet, url, nil)
 			if err != nil {
 				return nil, false, err
 			}
@@ -240,13 +240,13 @@ var inviteGetCmd = &cobra.Command{
 	Short: "Get invite details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
 		ctx := context.Background()
-		body, err := doRawRequest(ms, transport, ctx, http.MethodGet, "https://api.mailersend.com/v1/invites/"+args[0], nil)
+		body, err := doRawRequest(ms, ctx, http.MethodGet, "https://api.mailersend.com/v1/invites/"+args[0], nil)
 		if err != nil {
 			return err
 		}
@@ -287,13 +287,13 @@ var inviteResendCmd = &cobra.Command{
 	Short: "Resend an invite",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
 		ctx := context.Background()
-		_, err = doRawRequest(ms, transport, ctx, http.MethodPost, "https://api.mailersend.com/v1/invites/"+args[0]+"/resend", nil)
+		_, err = doRawRequest(ms, ctx, http.MethodPost, "https://api.mailersend.com/v1/invites/"+args[0]+"/resend", nil)
 		if err != nil {
 			return err
 		}
@@ -308,13 +308,13 @@ var inviteCancelCmd = &cobra.Command{
 	Short: "Cancel an invite",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
 		ctx := context.Background()
-		_, err = doRawRequest(ms, transport, ctx, http.MethodDelete, "https://api.mailersend.com/v1/invites/"+args[0], nil)
+		_, err = doRawRequest(ms, ctx, http.MethodDelete, "https://api.mailersend.com/v1/invites/"+args[0], nil)
 		if err != nil {
 			return err
 		}
@@ -331,7 +331,7 @@ var updateCmd = &cobra.Command{
 	Short: "Update a user",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -356,7 +356,7 @@ var updateCmd = &cobra.Command{
 		}
 
 		ctx := context.Background()
-		body, err := doRawRequest(ms, transport, ctx, http.MethodPut, "https://api.mailersend.com/v1/users/"+args[0], payload)
+		body, err := doRawRequest(ms, ctx, http.MethodPut, "https://api.mailersend.com/v1/users/"+args[0], payload)
 		if err != nil {
 			return err
 		}
@@ -379,7 +379,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a user",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -387,7 +387,7 @@ var deleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.User.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("User " + args[0] + " deleted successfully.")
@@ -404,7 +404,7 @@ type inviteItem struct {
 }
 
 // doRawRequest performs an HTTP request using the SDK's transport-equipped client.
-func doRawRequest(ms *mailersend.Mailersend, transport *sdkclient.CLITransport, ctx context.Context, method, url string, payload interface{}) ([]byte, error) {
+func doRawRequest(ms *mailersend.Mailersend, ctx context.Context, method, url string, payload interface{}) ([]byte, error) {
 	var bodyReader io.Reader
 	if payload != nil {
 		data, err := json.Marshal(payload)
@@ -426,7 +426,7 @@ func doRawRequest(ms *mailersend.Mailersend, transport *sdkclient.CLITransport, 
 
 	resp, err := ms.Client().Do(req)
 	if err != nil {
-		return nil, sdkclient.WrapError(transport, err)
+		return nil, sdkclient.WrapError(err)
 	}
 	defer resp.Body.Close() //nolint:errcheck
 

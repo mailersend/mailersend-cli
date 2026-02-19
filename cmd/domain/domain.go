@@ -71,7 +71,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List domains",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -93,7 +93,7 @@ var listCmd = &cobra.Command{
 				Verified: verifiedFilter,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -128,12 +128,12 @@ var getCmd = &cobra.Command{
 	Short: "Get domain details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
-		domainID, err := cmdutil.ResolveDomainSDK(ms, transport, args[0])
+		domainID, err := cmdutil.ResolveDomainSDK(ms, args[0])
 		if err != nil {
 			return err
 		}
@@ -141,7 +141,7 @@ var getCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Domain.Get(ctx, domainID)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -172,7 +172,7 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new domain",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -198,7 +198,7 @@ var addCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Domain.Create(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -217,12 +217,12 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a domain",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
-		domainID, err := cmdutil.ResolveDomainSDK(ms, transport, args[0])
+		domainID, err := cmdutil.ResolveDomainSDK(ms, args[0])
 		if err != nil {
 			return err
 		}
@@ -230,7 +230,7 @@ var deleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.Domain.Delete(ctx, domainID)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success(fmt.Sprintf("Domain %s deleted successfully.", args[0]))
@@ -244,12 +244,12 @@ var updateSettingsCmd = &cobra.Command{
 	Short: "Update domain settings",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
-		domainID, err := cmdutil.ResolveDomainSDK(ms, transport, args[0])
+		domainID, err := cmdutil.ResolveDomainSDK(ms, args[0])
 		if err != nil {
 			return err
 		}
@@ -313,7 +313,7 @@ var updateSettingsCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Domain.Update(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -332,12 +332,12 @@ var dnsCmd = &cobra.Command{
 	Short: "Show DNS records for a domain",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
-		domainID, err := cmdutil.ResolveDomainSDK(ms, transport, args[0])
+		domainID, err := cmdutil.ResolveDomainSDK(ms, args[0])
 		if err != nil {
 			return err
 		}
@@ -345,7 +345,7 @@ var dnsCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Domain.GetDNS(ctx, domainID)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -372,12 +372,12 @@ var verifyCmd = &cobra.Command{
 	Short: "Verify a domain",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
 
-		domainID, err := cmdutil.ResolveDomainSDK(ms, transport, args[0])
+		domainID, err := cmdutil.ResolveDomainSDK(ms, args[0])
 		if err != nil {
 			return err
 		}
@@ -385,7 +385,7 @@ var verifyCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Domain.Verify(ctx, domainID)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

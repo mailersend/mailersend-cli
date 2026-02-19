@@ -75,7 +75,7 @@ var verifyCmd = &cobra.Command{
 	Short: "Verify a single email address",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -92,7 +92,7 @@ var verifyCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 		defer resp.Body.Close() //nolint:errcheck
 
@@ -102,7 +102,7 @@ var verifyCmd = &cobra.Command{
 		}
 
 		if resp.StatusCode >= 400 {
-			return parseHTTPError(transport, resp.StatusCode, body)
+			return parseHTTPError(resp.StatusCode, body)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -152,7 +152,7 @@ var verifyAsyncCmd = &cobra.Command{
 	Short: "Verify a single email address asynchronously",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -169,7 +169,7 @@ var verifyAsyncCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 		defer resp.Body.Close() //nolint:errcheck
 
@@ -179,7 +179,7 @@ var verifyAsyncCmd = &cobra.Command{
 		}
 
 		if resp.StatusCode >= 400 {
-			return parseHTTPError(transport, resp.StatusCode, body)
+			return parseHTTPError(resp.StatusCode, body)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -219,7 +219,7 @@ var statusCmd = &cobra.Command{
 	Short: "Get async email verification status",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -234,7 +234,7 @@ var statusCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 		defer resp.Body.Close() //nolint:errcheck
 
@@ -244,7 +244,7 @@ var statusCmd = &cobra.Command{
 		}
 
 		if resp.StatusCode >= 400 {
-			return parseHTTPError(transport, resp.StatusCode, body)
+			return parseHTTPError(resp.StatusCode, body)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -294,7 +294,7 @@ var listListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all verification lists",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -308,7 +308,7 @@ var listListCmd = &cobra.Command{
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -352,7 +352,7 @@ var listGetCmd = &cobra.Command{
 	Short: "Get verification list details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -360,7 +360,7 @@ var listGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.EmailVerification.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -429,7 +429,7 @@ var listCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a verification list",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -466,7 +466,7 @@ var listCreateCmd = &cobra.Command{
 			Emails: emails,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -484,7 +484,7 @@ var listVerifyCmd = &cobra.Command{
 	Short: "Start verification of a list",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -494,7 +494,7 @@ var listVerifyCmd = &cobra.Command{
 
 		result, _, err := ms.EmailVerification.Verify(ctx, id)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		wait, _ := c.Flags().GetBool("wait")
@@ -514,7 +514,7 @@ var listVerifyCmd = &cobra.Command{
 
 			pollResult, _, err := ms.EmailVerification.Get(ctx, id)
 			if err != nil {
-				return sdkclient.WrapError(transport, err)
+				return sdkclient.WrapError(err)
 			}
 
 			statusName := ""
@@ -546,7 +546,7 @@ var listResultsCmd = &cobra.Command{
 	Short: "Get verification results for a list",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -562,7 +562,7 @@ var listResultsCmd = &cobra.Command{
 				Limit:               perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -591,7 +591,7 @@ var listResultsCmd = &cobra.Command{
 // --- Helpers ---
 
 // parseHTTPError creates a CLIError from a raw HTTP error response.
-func parseHTTPError(_ *sdkclient.CLITransport, statusCode int, body []byte) error {
+func parseHTTPError(statusCode int, body []byte) error {
 	cliErr := &sdkclient.CLIError{
 		StatusCode: statusCode,
 	}

@@ -60,12 +60,12 @@ func runList(cobraCmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
 
-	domainID, err := cmdutil.ResolveDomainSDK(ms, transport, domainIDStr)
+	domainID, err := cmdutil.ResolveDomainSDK(ms, domainIDStr)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func runList(cobraCmd *cobra.Command, args []string) error {
 			Event:    events,
 		})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, limit)
@@ -124,7 +124,7 @@ var getCmd = &cobra.Command{
 }
 
 func runGet(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -144,7 +144,7 @@ func runGet(cobraCmd *cobra.Command, args []string) error {
 
 	resp, err := ms.Client().Do(req)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 	defer resp.Body.Close() //nolint:errcheck
 

@@ -31,7 +31,7 @@ var numberListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS phone numbers",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -51,7 +51,7 @@ var numberListCmd = &cobra.Command{
 				Limit:  perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -83,7 +83,7 @@ var numberGetCmd = &cobra.Command{
 	Short: "Get SMS phone number details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -91,7 +91,7 @@ var numberGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsNumber.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -120,7 +120,7 @@ var numberUpdateCmd = &cobra.Command{
 	Short: "Update an SMS phone number",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -137,7 +137,7 @@ var numberUpdateCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsNumber.Update(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -154,7 +154,7 @@ var numberDeleteCmd = &cobra.Command{
 	Short: "Delete an SMS phone number",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -162,7 +162,7 @@ var numberDeleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.SmsNumber.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("SMS number " + args[0] + " deleted successfully.")

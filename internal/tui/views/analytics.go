@@ -40,8 +40,8 @@ var (
 
 // AnalyticsView displays analytics data.
 type AnalyticsView struct {
-	client    *mailersend.Mailersend
-	transport *sdkclient.CLITransport
+	client *mailersend.Mailersend
+
 	table     components.Table
 	data      types.AnalyticsData
 	loading   bool
@@ -53,7 +53,7 @@ type AnalyticsView struct {
 }
 
 // NewAnalyticsView creates a new analytics view.
-func NewAnalyticsView(client *mailersend.Mailersend, transport *sdkclient.CLITransport) AnalyticsView {
+func NewAnalyticsView(client *mailersend.Mailersend) AnalyticsView {
 	columns := []components.Column{
 		{Title: "DATE", Width: 12},
 		{Title: "SENT", Width: 10},
@@ -66,8 +66,8 @@ func NewAnalyticsView(client *mailersend.Mailersend, transport *sdkclient.CLITra
 	table.SetEmptyMessage("No analytics data found.")
 
 	return AnalyticsView{
-		client:    client,
-		transport: transport,
+		client: client,
+
 		table:     table,
 		loading:   true,
 		dateRange: "7d",
@@ -75,9 +75,9 @@ func NewAnalyticsView(client *mailersend.Mailersend, transport *sdkclient.CLITra
 }
 
 // SetClient updates the SDK client.
-func (v *AnalyticsView) SetClient(client *mailersend.Mailersend, transport *sdkclient.CLITransport) {
+func (v *AnalyticsView) SetClient(client *mailersend.Mailersend) {
 	v.client = client
-	v.transport = transport
+
 }
 
 // SetSize sets the view dimensions.
@@ -145,7 +145,7 @@ func (v AnalyticsView) Fetch() tea.Cmd {
 		})
 
 		if err != nil {
-			return types.AnalyticsLoadedMsg{Err: sdkclient.WrapError(v.transport, err)}
+			return types.AnalyticsLoadedMsg{Err: sdkclient.WrapError(err)}
 		}
 
 		// Calculate totals

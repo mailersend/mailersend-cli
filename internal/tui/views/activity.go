@@ -33,8 +33,8 @@ var (
 
 // ActivityView displays the activity log.
 type ActivityView struct {
-	client          *mailersend.Mailersend
-	transport       *sdkclient.CLITransport
+	client *mailersend.Mailersend
+
 	table           components.Table
 	detail          components.DetailPanel
 	items           []types.ActivityItem
@@ -50,7 +50,7 @@ type ActivityView struct {
 }
 
 // NewActivityView creates a new activity view.
-func NewActivityView(client *mailersend.Mailersend, transport *sdkclient.CLITransport) ActivityView {
+func NewActivityView(client *mailersend.Mailersend) ActivityView {
 	columns := []components.Column{
 		{Title: "TIME", Width: 19},
 		{Title: "EVENT", Width: 14},
@@ -61,8 +61,8 @@ func NewActivityView(client *mailersend.Mailersend, transport *sdkclient.CLITran
 	table.SetEmptyMessage("Select a domain to view activity.")
 
 	return ActivityView{
-		client:         client,
-		transport:      transport,
+		client: client,
+
 		table:          table,
 		loading:        true,
 		loadingDomains: true,
@@ -70,9 +70,9 @@ func NewActivityView(client *mailersend.Mailersend, transport *sdkclient.CLITran
 }
 
 // SetClient updates the SDK client.
-func (v *ActivityView) SetClient(client *mailersend.Mailersend, transport *sdkclient.CLITransport) {
+func (v *ActivityView) SetClient(client *mailersend.Mailersend) {
 	v.client = client
-	v.transport = transport
+
 }
 
 // SetSize sets the view dimensions.
@@ -124,7 +124,7 @@ func (v ActivityView) fetchDomains() tea.Cmd {
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(v.transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, 100)
@@ -168,7 +168,7 @@ func (v ActivityView) fetchActivity() tea.Cmd {
 				DateTo:   dateTo,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(v.transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 
 			var items []types.ActivityItem

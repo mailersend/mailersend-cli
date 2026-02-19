@@ -15,7 +15,7 @@ var Cmd = &cobra.Command{
 	Short: "View API quota",
 	Long:  "Display your current API quota usage.",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -23,7 +23,7 @@ var Cmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.ApiQuota.Get(ctx)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

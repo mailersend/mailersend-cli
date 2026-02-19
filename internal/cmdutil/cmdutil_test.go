@@ -44,8 +44,8 @@ func newTestSDKClient(handler http.HandlerFunc) (*mailersend.Mailersend, *sdkcli
 func TestResolveDomainSDK_IDReturnsAsIs(t *testing.T) {
 	// No dots means it's treated as an ID — no API call needed.
 	ms := mailersend.NewMailersend("unused")
-	transport := &sdkclient.CLITransport{Base: http.DefaultTransport}
-	got, err := ResolveDomainSDK(ms, transport, "abc123")
+
+	got, err := ResolveDomainSDK(ms, "abc123")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -62,9 +62,9 @@ func TestResolveDomainSDK_HostnameMatchReturnsDomainID(t *testing.T) {
 			{"id": "domain-2", "name": "test.org"},
 		}))
 	}
-	ms, transport := newTestSDKClient(handler)
+	ms, _ := newTestSDKClient(handler)
 
-	got, err := ResolveDomainSDK(ms, transport, "example.com")
+	got, err := ResolveDomainSDK(ms, "example.com")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -80,9 +80,9 @@ func TestResolveDomainSDK_HostnameNoMatchReturnsError(t *testing.T) {
 			{"id": "domain-1", "name": "example.com"},
 		}))
 	}
-	ms, transport := newTestSDKClient(handler)
+	ms, _ := newTestSDKClient(handler)
 
-	_, err := ResolveDomainSDK(ms, transport, "notfound.io")
+	_, err := ResolveDomainSDK(ms, "notfound.io")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -96,8 +96,8 @@ func TestResolveDomainSDK_HostnameNoMatchReturnsError(t *testing.T) {
 func TestResolveDomainNameSDK_HostnameReturnsAsIs(t *testing.T) {
 	// A value with a dot is treated as a hostname and returned unchanged.
 	ms := mailersend.NewMailersend("unused")
-	transport := &sdkclient.CLITransport{Base: http.DefaultTransport}
-	got, err := ResolveDomainNameSDK(ms, transport, "example.com")
+
+	got, err := ResolveDomainNameSDK(ms, "example.com")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -114,9 +114,9 @@ func TestResolveDomainNameSDK_IDResolvedToName(t *testing.T) {
 			{"id": "domain-2", "name": "test-sdk.com"},
 		}))
 	}
-	ms, transport := newTestSDKClient(handler)
+	ms, _ := newTestSDKClient(handler)
 
-	got, err := ResolveDomainNameSDK(ms, transport, "domain-2")
+	got, err := ResolveDomainNameSDK(ms, "domain-2")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -132,9 +132,9 @@ func TestResolveDomainNameSDK_IDNotFoundReturnsError(t *testing.T) {
 			{"id": "domain-1", "name": "example.com"},
 		}))
 	}
-	ms, transport := newTestSDKClient(handler)
+	ms, _ := newTestSDKClient(handler)
 
-	_, err := ResolveDomainNameSDK(ms, transport, "nonexistent")
+	_, err := ResolveDomainNameSDK(ms, "nonexistent")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -150,9 +150,9 @@ func TestResolveDomainSDK_CaseInsensitiveMatch(t *testing.T) {
 			{"id": "domain-upper", "name": "Example.COM"},
 		}))
 	}
-	ms, transport := newTestSDKClient(handler)
+	ms, _ := newTestSDKClient(handler)
 
-	got, err := ResolveDomainSDK(ms, transport, "example.com")
+	got, err := ResolveDomainSDK(ms, "example.com")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

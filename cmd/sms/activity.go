@@ -29,7 +29,7 @@ var activityListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS activity",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ var activityListCmd = &cobra.Command{
 			}
 			root, _, err := ms.SmsActivity.List(ctx, opts)
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)

@@ -27,7 +27,7 @@ var messageListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS messages",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -41,7 +41,7 @@ var messageListCmd = &cobra.Command{
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -74,7 +74,7 @@ var messageGetCmd = &cobra.Command{
 	Short: "Get SMS message details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ var messageGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsMessage.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

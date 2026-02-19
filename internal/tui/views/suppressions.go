@@ -58,8 +58,8 @@ var (
 
 // SuppressionsView displays suppression lists.
 type SuppressionsView struct {
-	client        *mailersend.Mailersend
-	transport     *sdkclient.CLITransport
+	client *mailersend.Mailersend
+
 	table         components.Table
 	detail        components.DetailPanel
 	items         []types.SuppressionItem
@@ -74,7 +74,7 @@ type SuppressionsView struct {
 }
 
 // NewSuppressionsView creates a new suppressions view.
-func NewSuppressionsView(client *mailersend.Mailersend, transport *sdkclient.CLITransport) SuppressionsView {
+func NewSuppressionsView(client *mailersend.Mailersend) SuppressionsView {
 	columns := []components.Column{
 		{Title: "EMAIL/PATTERN", Width: 35},
 		{Title: "TYPE/REASON", Width: 25},
@@ -84,8 +84,8 @@ func NewSuppressionsView(client *mailersend.Mailersend, transport *sdkclient.CLI
 	table.SetEmptyMessage("No suppression entries found.")
 
 	return SuppressionsView{
-		client:    client,
-		transport: transport,
+		client: client,
+
 		table:     table,
 		loading:   true,
 		activeTab: SuppressionBlocklist,
@@ -93,9 +93,9 @@ func NewSuppressionsView(client *mailersend.Mailersend, transport *sdkclient.CLI
 }
 
 // SetClient updates the SDK client.
-func (v *SuppressionsView) SetClient(client *mailersend.Mailersend, transport *sdkclient.CLITransport) {
+func (v *SuppressionsView) SetClient(client *mailersend.Mailersend) {
 	v.client = client
-	v.transport = transport
+
 }
 
 // SetSize sets the view dimensions.
@@ -162,7 +162,7 @@ func (v SuppressionsView) Fetch() tea.Cmd {
 func (v *SuppressionsView) fetchBlocklist(ctx context.Context) ([]types.SuppressionItem, error) {
 	result, _, err := v.client.Suppression.ListBlockList(ctx, nil)
 	if err != nil {
-		return nil, sdkclient.WrapError(v.transport, err)
+		return nil, sdkclient.WrapError(err)
 	}
 
 	var items []types.SuppressionItem
@@ -180,7 +180,7 @@ func (v *SuppressionsView) fetchBlocklist(ctx context.Context) ([]types.Suppress
 func (v *SuppressionsView) fetchBounces(ctx context.Context) ([]types.SuppressionItem, error) {
 	result, _, err := v.client.Suppression.ListHardBounces(ctx, nil)
 	if err != nil {
-		return nil, sdkclient.WrapError(v.transport, err)
+		return nil, sdkclient.WrapError(err)
 	}
 
 	var items []types.SuppressionItem
@@ -198,7 +198,7 @@ func (v *SuppressionsView) fetchBounces(ctx context.Context) ([]types.Suppressio
 func (v *SuppressionsView) fetchSpam(ctx context.Context) ([]types.SuppressionItem, error) {
 	result, _, err := v.client.Suppression.ListSpamComplaints(ctx, nil)
 	if err != nil {
-		return nil, sdkclient.WrapError(v.transport, err)
+		return nil, sdkclient.WrapError(err)
 	}
 
 	var items []types.SuppressionItem
@@ -216,7 +216,7 @@ func (v *SuppressionsView) fetchSpam(ctx context.Context) ([]types.SuppressionIt
 func (v *SuppressionsView) fetchUnsubscribes(ctx context.Context) ([]types.SuppressionItem, error) {
 	result, _, err := v.client.Suppression.ListUnsubscribes(ctx, nil)
 	if err != nil {
-		return nil, sdkclient.WrapError(v.transport, err)
+		return nil, sdkclient.WrapError(err)
 	}
 
 	var items []types.SuppressionItem

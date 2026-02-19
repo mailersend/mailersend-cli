@@ -15,8 +15,8 @@ import (
 
 // MessagesView displays sent messages.
 type MessagesView struct {
-	client        *mailersend.Mailersend
-	transport     *sdkclient.CLITransport
+	client *mailersend.Mailersend
+
 	table         components.Table
 	detail        components.DetailPanel
 	items         []types.MessageItem
@@ -30,7 +30,7 @@ type MessagesView struct {
 }
 
 // NewMessagesView creates a new messages view.
-func NewMessagesView(client *mailersend.Mailersend, transport *sdkclient.CLITransport) MessagesView {
+func NewMessagesView(client *mailersend.Mailersend) MessagesView {
 	columns := []components.Column{
 		{Title: "MESSAGE ID", Width: 28},
 		{Title: "CREATED", Width: 19},
@@ -41,17 +41,17 @@ func NewMessagesView(client *mailersend.Mailersend, transport *sdkclient.CLITran
 	table.SetLoading(true)
 
 	return MessagesView{
-		client:    client,
-		transport: transport,
-		table:     table,
-		loading:   true,
+		client: client,
+
+		table:   table,
+		loading: true,
 	}
 }
 
 // SetClient updates the SDK client.
-func (v *MessagesView) SetClient(client *mailersend.Mailersend, transport *sdkclient.CLITransport) {
+func (v *MessagesView) SetClient(client *mailersend.Mailersend) {
 	v.client = client
-	v.transport = transport
+
 }
 
 // SetSize sets the view dimensions.
@@ -98,7 +98,7 @@ func (v MessagesView) Fetch() tea.Cmd {
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(v.transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 
 			var out []types.MessageItem
@@ -221,7 +221,7 @@ func (v *MessagesView) fetchDetail(messageID string) tea.Cmd {
 
 		result, _, err := v.client.Message.Get(ctx, messageID)
 		if err != nil {
-			return types.MessageDetailLoadedMsg{Err: sdkclient.WrapError(v.transport, err)}
+			return types.MessageDetailLoadedMsg{Err: sdkclient.WrapError(err)}
 		}
 
 		detail := types.MessageDetail{

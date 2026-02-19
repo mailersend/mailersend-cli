@@ -50,7 +50,7 @@ func init() {
 }
 
 func runSend(cobraCmd *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func runSend(cobraCmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 	resp, err := ms.Email.Send(ctx, message)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	// JSON output

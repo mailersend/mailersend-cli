@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 }
 
 func runList(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func runList(c *cobra.Command, args []string) error {
 	limit, _ := c.Flags().GetInt("limit")
 	domainID, _ := c.Flags().GetString("domain")
 	if domainID != "" {
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -58,7 +58,7 @@ func runList(c *cobra.Command, args []string) error {
 			Limit:    perPage,
 		})
 		if err != nil {
-			return nil, false, sdkclient.WrapError(transport, err)
+			return nil, false, sdkclient.WrapError(err)
 		}
 		return root.Data, root.Links.Next != "", nil
 	}, limit)
@@ -96,7 +96,7 @@ var getCmd = &cobra.Command{
 }
 
 func runGet(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func runGet(c *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := ms.Template.Get(ctx, args[0])
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(c) {
@@ -157,7 +157,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func runDelete(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ func runDelete(c *cobra.Command, args []string) error {
 	ctx := context.Background()
 	_, err = ms.Template.Delete(ctx, args[0])
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	output.Success("Template " + args[0] + " deleted successfully.")

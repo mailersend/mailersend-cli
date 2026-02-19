@@ -76,7 +76,7 @@ var listCmd = &cobra.Command{
 }
 
 func runList(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func runList(c *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+	domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func runList(c *cobra.Command, args []string) error {
 
 	result, _, err := ms.Webhook.List(ctx, opts)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(c) {
@@ -138,7 +138,7 @@ var getCmd = &cobra.Command{
 }
 
 func runGet(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -146,7 +146,7 @@ func runGet(c *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := ms.Webhook.Get(ctx, args[0])
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(c) {
@@ -186,7 +186,7 @@ var createCmd = &cobra.Command{
 }
 
 func runCreate(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -206,7 +206,7 @@ func runCreate(c *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+	domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 	if err != nil {
 		return err
 	}
@@ -230,7 +230,7 @@ func runCreate(c *cobra.Command, args []string) error {
 
 	result, _, err := ms.Webhook.Create(ctx, opts)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(c) {
@@ -252,7 +252,7 @@ var updateCmd = &cobra.Command{
 }
 
 func runUpdate(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -285,7 +285,7 @@ func runUpdate(c *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := ms.Webhook.Update(ctx, opts)
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(c) {
@@ -306,7 +306,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func runDelete(c *cobra.Command, args []string) error {
-	ms, transport, err := cmdutil.NewSDKClient(c)
+	ms, err := cmdutil.NewSDKClient(c)
 	if err != nil {
 		return err
 	}
@@ -314,7 +314,7 @@ func runDelete(c *cobra.Command, args []string) error {
 	ctx := context.Background()
 	_, err = ms.Webhook.Delete(ctx, args[0])
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	output.Success("Webhook " + args[0] + " deleted successfully.")

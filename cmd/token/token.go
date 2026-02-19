@@ -48,7 +48,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List API tokens",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -99,7 +99,6 @@ var listCmd = &cobra.Command{
 			return parsed.Data, parsed.Links.Next != "", nil
 		}, limit)
 		if err != nil {
-			_ = transport // ensure transport is used
 			return err
 		}
 
@@ -126,7 +125,7 @@ var getCmd = &cobra.Command{
 	Short: "Get API token details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -142,7 +141,6 @@ var getCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			_ = transport // ensure transport is used
 			return err
 		}
 		defer resp.Body.Close() //nolint:errcheck
@@ -195,7 +193,7 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an API token",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -212,7 +210,7 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -228,7 +226,7 @@ var createCmd = &cobra.Command{
 			Scopes:   scopes,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -252,7 +250,7 @@ var updateCmd = &cobra.Command{
 	Short: "Update an API token",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -282,7 +280,6 @@ var updateCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			_ = transport // ensure transport is used
 			return err
 		}
 		defer resp.Body.Close() //nolint:errcheck
@@ -316,7 +313,7 @@ var updateStatusCmd = &cobra.Command{
 	Short: "Update API token status (pause/unpause)",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -334,7 +331,7 @@ var updateStatusCmd = &cobra.Command{
 			Status:  status,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -353,7 +350,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete an API token",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -361,7 +358,7 @@ var deleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.Token.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("Token " + args[0] + " deleted successfully.")

@@ -53,7 +53,7 @@ func addDeleteFlags(cmd *cobra.Command) {
 
 func suppressionDeleteRun(suppressionType string) func(*cobra.Command, []string) error {
 	return func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -69,7 +69,7 @@ func suppressionDeleteRun(suppressionType string) func(*cobra.Command, []string)
 		var domainID string
 		if c.Flags().Changed("domain") {
 			domainID, _ = c.Flags().GetString("domain")
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -84,7 +84,7 @@ func suppressionDeleteRun(suppressionType string) func(*cobra.Command, []string)
 			}, suppressionType)
 		}
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("Suppression entries deleted successfully.")
@@ -103,7 +103,7 @@ var blocklistListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List blocklist entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -113,7 +113,7 @@ var blocklistListCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -126,7 +126,7 @@ var blocklistListCmd = &cobra.Command{
 				Limit:    perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			var out []suppressionItem
 			for _, d := range root.Data {
@@ -162,7 +162,7 @@ var blocklistAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add entries to the blocklist",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -174,7 +174,7 @@ var blocklistAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -187,7 +187,7 @@ var blocklistAddCmd = &cobra.Command{
 			Patterns:   patterns,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -230,7 +230,7 @@ var hardBouncesListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List hard bounce entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -240,7 +240,7 @@ var hardBouncesListCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -253,7 +253,7 @@ var hardBouncesListCmd = &cobra.Command{
 				Limit:    perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			var out []suppressionItem
 			for _, d := range root.Data {
@@ -288,7 +288,7 @@ var hardBouncesAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add hard bounce entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -300,7 +300,7 @@ var hardBouncesAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -311,7 +311,7 @@ var hardBouncesAddCmd = &cobra.Command{
 			Recipients: recipients,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -353,7 +353,7 @@ var spamComplaintsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List spam complaint entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -363,7 +363,7 @@ var spamComplaintsListCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -376,7 +376,7 @@ var spamComplaintsListCmd = &cobra.Command{
 				Limit:    perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			var out []suppressionItem
 			for _, d := range root.Data {
@@ -411,7 +411,7 @@ var spamComplaintsAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add spam complaint entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -423,7 +423,7 @@ var spamComplaintsAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -434,7 +434,7 @@ var spamComplaintsAddCmd = &cobra.Command{
 			Recipients: recipients,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -476,7 +476,7 @@ var unsubscribesListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List unsubscribe entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -486,7 +486,7 @@ var unsubscribesListCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -499,7 +499,7 @@ var unsubscribesListCmd = &cobra.Command{
 				Limit:    perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			var out []suppressionItem
 			for _, d := range root.Data {
@@ -534,7 +534,7 @@ var unsubscribesAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add unsubscribe entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -546,7 +546,7 @@ var unsubscribesAddCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -557,7 +557,7 @@ var unsubscribesAddCmd = &cobra.Command{
 			Recipients: recipients,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -602,7 +602,7 @@ var onHoldListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List on-hold entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -612,7 +612,7 @@ var onHoldListCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -667,7 +667,6 @@ var onHoldListCmd = &cobra.Command{
 			return parsed.Data, parsed.Links.Next != "", nil
 		}, limit)
 		if err != nil {
-			_ = transport // ensure transport is used
 			return err
 		}
 
@@ -694,7 +693,7 @@ var onHoldDeleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete on-hold entries",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -729,7 +728,6 @@ var onHoldDeleteCmd = &cobra.Command{
 
 		resp, err := ms.Client().Do(req)
 		if err != nil {
-			_ = transport // ensure transport is used
 			return err
 		}
 		defer resp.Body.Close() //nolint:errcheck

@@ -51,7 +51,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMTP users",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -74,7 +74,7 @@ var listCmd = &cobra.Command{
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -102,7 +102,7 @@ var getCmd = &cobra.Command{
 	Short: "Get SMTP user details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -112,7 +112,7 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -120,7 +120,7 @@ var getCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmtpUser.Get(ctx, domainID, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -143,7 +143,7 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create an SMTP user",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -153,7 +153,7 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -174,7 +174,7 @@ var createCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmtpUser.Create(ctx, domainID, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -191,7 +191,7 @@ var updateCmd = &cobra.Command{
 	Short: "Update an SMTP user",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -201,7 +201,7 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -220,7 +220,7 @@ var updateCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmtpUser.Update(ctx, domainID, args[0], opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -237,7 +237,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete an SMTP user",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -247,7 +247,7 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -255,7 +255,7 @@ var deleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.SmtpUser.Delete(ctx, domainID, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("SMTP user " + args[0] + " deleted successfully.")

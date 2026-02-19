@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mailersend/mailersend-cli/internal/sdkclient"
+
 	"github.com/mailersend/mailersend-cli/internal/tui/components"
 	"github.com/mailersend/mailersend-cli/internal/tui/theme"
 	"github.com/mailersend/mailersend-cli/internal/tui/types"
@@ -43,9 +43,8 @@ const (
 // App is the main TUI application model.
 type App struct {
 	// SDK
-	client    *mailersend.Mailersend
-	transport *sdkclient.CLITransport
-	profile   string
+	client  *mailersend.Mailersend
+	profile string
 
 	// Components
 	sidebar   components.Sidebar
@@ -72,12 +71,12 @@ type App struct {
 }
 
 // NewApp creates a new TUI application.
-func NewApp(client *mailersend.Mailersend, transport *sdkclient.CLITransport, profile string) *App {
+func NewApp(client *mailersend.Mailersend, profile string) *App {
 	keys := DefaultKeyMap()
 
 	app := &App{
-		client:    client,
-		transport: transport,
+		client: client,
+
 		profile:   profile,
 		keys:      keys,
 		sidebar:   components.NewSidebar(),
@@ -88,11 +87,11 @@ func NewApp(client *mailersend.Mailersend, transport *sdkclient.CLITransport, pr
 	}
 
 	// Initialize views
-	app.domains = views.NewDomainsView(client, transport)
-	app.activity = views.NewActivityView(client, transport)
-	app.analytics = views.NewAnalyticsView(client, transport)
-	app.messages = views.NewMessagesView(client, transport)
-	app.suppressions = views.NewSuppressionsView(client, transport)
+	app.domains = views.NewDomainsView(client)
+	app.activity = views.NewActivityView(client)
+	app.analytics = views.NewAnalyticsView(client)
+	app.messages = views.NewMessagesView(client)
+	app.suppressions = views.NewSuppressionsView(client)
 
 	// Set initial focus
 	app.sidebar.SetFocused(false)

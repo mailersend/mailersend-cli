@@ -80,14 +80,14 @@ func runDate(cobraCmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return err
 	}
 
 	domainID, _ := flags.GetString("domain")
 	if domainID != "" {
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -105,7 +105,7 @@ func runDate(cobraCmd *cobra.Command, args []string) error {
 		Event:    events,
 	})
 	if err != nil {
-		return sdkclient.WrapError(transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	if cmdutil.JSONFlag(cobraCmd) {
@@ -175,7 +175,7 @@ func runCountry(cobraCmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := opts.ms.Analytics.GetOpensByCountry(ctx, opts.options)
 	if err != nil {
-		return sdkclient.WrapError(opts.transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	return renderOpens(cobraCmd, result, "COUNTRY", "COUNT")
@@ -198,7 +198,7 @@ func runUAName(cobraCmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := opts.ms.Analytics.GetOpensByUserAgent(ctx, opts.options)
 	if err != nil {
-		return sdkclient.WrapError(opts.transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	return renderOpens(cobraCmd, result, "USER AGENT", "COUNT")
@@ -221,7 +221,7 @@ func runUAType(cobraCmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 	result, _, err := opts.ms.Analytics.GetOpensByReadingEnvironment(ctx, opts.options)
 	if err != nil {
-		return sdkclient.WrapError(opts.transport, err)
+		return sdkclient.WrapError(err)
 	}
 
 	return renderOpens(cobraCmd, result, "TYPE", "COUNT")
@@ -230,9 +230,9 @@ func runUAType(cobraCmd *cobra.Command, args []string) error {
 // --- shared helpers for country / ua-name / ua-type ---
 
 type opensContext struct {
-	ms        *mailersend.Mailersend
-	transport *sdkclient.CLITransport
-	options   *mailersend.AnalyticsOptions
+	ms *mailersend.Mailersend
+
+	options *mailersend.AnalyticsOptions
 }
 
 func buildOpensOptions(cobraCmd *cobra.Command) (*opensContext, error) {
@@ -246,14 +246,14 @@ func buildOpensOptions(cobraCmd *cobra.Command) (*opensContext, error) {
 		return nil, err
 	}
 
-	ms, transport, err := cmdutil.NewSDKClient(cobraCmd)
+	ms, err := cmdutil.NewSDKClient(cobraCmd)
 	if err != nil {
 		return nil, err
 	}
 
 	domainID, _ := flags.GetString("domain")
 	if domainID != "" {
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return nil, err
 		}
@@ -261,8 +261,8 @@ func buildOpensOptions(cobraCmd *cobra.Command) (*opensContext, error) {
 	tags, _ := flags.GetStringSlice("tags")
 
 	return &opensContext{
-		ms:        ms,
-		transport: transport,
+		ms: ms,
+
 		options: &mailersend.AnalyticsOptions{
 			DomainID: domainID,
 			DateFrom: dateFrom,

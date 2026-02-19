@@ -55,7 +55,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List sender identities",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -65,7 +65,7 @@ var listCmd = &cobra.Command{
 
 		domainID, _ := c.Flags().GetString("domain")
 		if domainID != "" {
-			domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+			domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 			if err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ var listCmd = &cobra.Command{
 				Limit:    perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -106,7 +106,7 @@ var getCmd = &cobra.Command{
 	Short: "Get sender identity details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -119,7 +119,7 @@ var getCmd = &cobra.Command{
 			result, _, err = ms.Identity.Get(ctx, args[0])
 		}
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -145,7 +145,7 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a sender identity",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -157,7 +157,7 @@ var createCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		domainID, err = cmdutil.ResolveDomainSDK(ms, transport, domainID)
+		domainID, err = cmdutil.ResolveDomainSDK(ms, domainID)
 		if err != nil {
 			return err
 		}
@@ -194,7 +194,7 @@ var createCmd = &cobra.Command{
 
 		result, _, err := ms.Identity.Create(ctx, opts)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -211,7 +211,7 @@ var updateCmd = &cobra.Command{
 	Short: "Update a sender identity",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -248,7 +248,7 @@ var updateCmd = &cobra.Command{
 			result, _, err = ms.Identity.Update(ctx, args[0], opts)
 		}
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -265,7 +265,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a sender identity",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -277,7 +277,7 @@ var deleteCmd = &cobra.Command{
 			_, err = ms.Identity.Delete(ctx, args[0])
 		}
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("Identity " + args[0] + " deleted successfully.")

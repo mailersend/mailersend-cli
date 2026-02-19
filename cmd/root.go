@@ -27,12 +27,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	profileFlag string
-	verboseFlag bool
-	jsonFlag    bool
-)
-
 var rootCmd = &cobra.Command{
 	Use:           "mailersend",
 	Short:         "MailerSend CLI — manage your email infrastructure from the terminal",
@@ -44,9 +38,9 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.Version = version
 	cmdutil.SetVersion(version)
-	rootCmd.PersistentFlags().StringVar(&profileFlag, "profile", "", "config profile to use")
-	rootCmd.PersistentFlags().BoolVarP(&verboseFlag, "verbose", "v", false, "show HTTP request/response details")
-	rootCmd.PersistentFlags().BoolVar(&jsonFlag, "json", false, "output as JSON")
+	rootCmd.PersistentFlags().String("profile", "", "config profile to use")
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "show HTTP request/response details")
+	rootCmd.PersistentFlags().Bool("json", false, "output as JSON")
 
 	rootCmd.AddCommand(dashboard.Cmd)
 	rootCmd.AddCommand(email.Cmd)
@@ -78,5 +72,5 @@ func Execute() error {
 }
 
 func IsJSON() bool {
-	return jsonFlag
+	return cmdutil.JSONFlag(rootCmd)
 }

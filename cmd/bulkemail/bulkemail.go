@@ -32,7 +32,7 @@ var sendCmd = &cobra.Command{
 	Use:   "send",
 	Short: "Send bulk email",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -55,7 +55,7 @@ var sendCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.BulkEmail.Send(ctx, messages)
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -72,7 +72,7 @@ var statusCmd = &cobra.Command{
 	Short: "Get bulk email status",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ var statusCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.BulkEmail.Status(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

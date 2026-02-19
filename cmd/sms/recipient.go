@@ -32,7 +32,7 @@ var recipientListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List SMS recipients",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -51,7 +51,7 @@ var recipientListCmd = &cobra.Command{
 			}
 			root, _, err := ms.SmsRecipient.List(ctx, opts)
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, limit)
@@ -83,7 +83,7 @@ var recipientGetCmd = &cobra.Command{
 	Short: "Get SMS recipient details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -91,7 +91,7 @@ var recipientGetCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.SmsRecipient.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -115,7 +115,7 @@ var recipientUpdateCmd = &cobra.Command{
 	Short: "Update an SMS recipient",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -132,7 +132,7 @@ var recipientUpdateCmd = &cobra.Command{
 			Status: status,
 		})
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {

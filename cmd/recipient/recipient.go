@@ -31,7 +31,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List recipients",
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -44,7 +44,7 @@ var listCmd = &cobra.Command{
 		// filter client-side by email suffix.
 		domainName, _ := c.Flags().GetString("domain")
 		if domainName != "" {
-			domainName, err = cmdutil.ResolveDomainNameSDK(ms, transport, domainName)
+			domainName, err = cmdutil.ResolveDomainNameSDK(ms, domainName)
 			if err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ var listCmd = &cobra.Command{
 				Limit: perPage,
 			})
 			if err != nil {
-				return nil, false, sdkclient.WrapError(transport, err)
+				return nil, false, sdkclient.WrapError(err)
 			}
 			return root.Data, root.Links.Next != "", nil
 		}, fetchLimit)
@@ -109,7 +109,7 @@ var getCmd = &cobra.Command{
 	Short: "Get recipient details",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -117,7 +117,7 @@ var getCmd = &cobra.Command{
 		ctx := context.Background()
 		result, _, err := ms.Recipient.Get(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		if cmdutil.JSONFlag(c) {
@@ -142,7 +142,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a recipient",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(c *cobra.Command, args []string) error {
-		ms, transport, err := cmdutil.NewSDKClient(c)
+		ms, err := cmdutil.NewSDKClient(c)
 		if err != nil {
 			return err
 		}
@@ -150,7 +150,7 @@ var deleteCmd = &cobra.Command{
 		ctx := context.Background()
 		_, err = ms.Recipient.Delete(ctx, args[0])
 		if err != nil {
-			return sdkclient.WrapError(transport, err)
+			return sdkclient.WrapError(err)
 		}
 
 		output.Success("Recipient " + args[0] + " deleted successfully.")

@@ -1,9 +1,11 @@
 package sdkclient
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/mailersend/mailersend-go"
@@ -39,9 +41,9 @@ func (e *CLIError) Error() string {
 }
 
 // WrapError converts SDK errors into CLIError with full field-level details.
-// It uses the transport's captured response body to extract validation errors
-// that the SDK discards.
-func WrapError(transport *CLITransport, err error) error {
+// It uses the response body captured by CLITransport to extract validation
+// errors that the SDK discards.
+func WrapError(err error) error {
 	if err == nil {
 		return nil
 	}
@@ -51,14 +53,18 @@ func WrapError(transport *CLITransport, err error) error {
 	// Try to extract status code and message from SDK error types.
 	var errResp *mailersend.ErrorResponse
 	var authErr *mailersend.AuthError
+	var httpResp *http.Response
+
 	switch {
 	case errors.As(err, &authErr):
 		if authErr.Response != nil {
+			httpResp = authErr.Response
 			cliErr.StatusCode = authErr.Response.StatusCode
 		}
 		cliErr.Message = authErr.Message
 	case errors.As(err, &errResp):
 		if errResp.Response != nil {
+			httpResp = errResp.Response
 			cliErr.StatusCode = errResp.Response.StatusCode
 		}
 		cliErr.Message = errResp.Message
@@ -68,20 +74,23 @@ func WrapError(transport *CLITransport, err error) error {
 	}
 
 	// Try to parse the captured response body for field-level errors.
-	rawBody := transport.LastErrorBody()
-	if len(rawBody) > 0 {
-		cliErr.RawBody = json.RawMessage(rawBody)
+	if httpResp != nil && httpResp.Header != nil {
+		if encodedBody := httpResp.Header.Get("X-CLI-Error-Body"); encodedBody != "" {
+			if rawBody, decErr := base64.StdEncoding.DecodeString(encodedBody); decErr == nil && len(rawBody) > 0 {
+				cliErr.RawBody = json.RawMessage(rawBody)
 
-		var parsed struct {
-			Message string              `json:"message"`
-			Errors  map[string][]string `json:"errors"`
-		}
-		if json.Unmarshal(rawBody, &parsed) == nil {
-			if parsed.Message != "" {
-				cliErr.Message = parsed.Message
-			}
-			if len(parsed.Errors) > 0 {
-				cliErr.Errors = parsed.Errors
+				var parsed struct {
+					Message string              `json:"message"`
+					Errors  map[string][]string `json:"errors"`
+				}
+				if json.Unmarshal(rawBody, &parsed) == nil {
+					if parsed.Message != "" {
+						cliErr.Message = parsed.Message
+					}
+					if len(parsed.Errors) > 0 {
+						cliErr.Errors = parsed.Errors
+					}
+				}
 			}
 		}
 	}
