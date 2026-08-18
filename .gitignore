@@ -1,9 +1,9 @@
 # Binaries
-mailersend-cli
 mailersend
 *.exe
 
-# GoReleaser
+# Build output
+target/
 dist/
 
 # Test artifacts

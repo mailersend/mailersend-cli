@@ -8,39 +8,40 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     let
-      version = "1.0.5";
-      
-      # Map nix system to goreleaser naming
+      version = "2.0.0";
+
+      # Map nix system to Rust target triples (cargo-dist artifact naming)
       systemMap = {
-        "x86_64-linux" = { os = "linux"; arch = "amd64"; };
-        "aarch64-linux" = { os = "linux"; arch = "arm64"; };
-        "x86_64-darwin" = { os = "darwin"; arch = "amd64"; };
-        "aarch64-darwin" = { os = "darwin"; arch = "arm64"; };
+        "x86_64-linux" = "x86_64-unknown-linux-gnu";
+        "aarch64-linux" = "aarch64-unknown-linux-gnu";
+        "x86_64-darwin" = "x86_64-apple-darwin";
+        "aarch64-darwin" = "aarch64-apple-darwin";
       };
 
       # SHA256 hashes for each platform (updated by CI on release)
       hashes = {
-        "x86_64-linux" = "sha256-lM+6EEGrqOgXOwfZaJlynn3TX+9Q8eoEGMpWliLbLR0=";
-        "aarch64-linux" = "sha256-BDiCPVK8vH5ClXPupLLtvwpMhAOy1/VB/4+VpniFCKg=";
-        "x86_64-darwin" = "sha256-G5hWGEquTz6YKik16egI/Fg7Jr9wxjzvrO13z8zVX7c=";
-        "aarch64-darwin" = "sha256-LsC6DwqgpgAWLveLmzUstFP0gHDXr5mkfNqk0p9n4/0=";
+        "x86_64-linux" = "sha256-0000000000000000000000000000000000000000000=";
+        "aarch64-linux" = "sha256-0000000000000000000000000000000000000000000=";
+        "x86_64-darwin" = "sha256-0000000000000000000000000000000000000000000=";
+        "aarch64-darwin" = "sha256-0000000000000000000000000000000000000000000=";
       };
     in
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        platformInfo = systemMap.${system} or (throw "Unsupported system: ${system}");
-        
+        target = systemMap.${system} or (throw "Unsupported system: ${system}");
+
         mailersend = pkgs.stdenv.mkDerivation {
           pname = "mailersend";
           inherit version;
 
           src = pkgs.fetchurl {
-            url = "https://github.com/mailersend/mailersend-cli/releases/download/v${version}/mailersend-cli_${version}_${platformInfo.os}_${platformInfo.arch}.tar.gz";
+            url = "https://github.com/mailersend/mailersend-cli/releases/download/v${version}/mailersend-${target}.tar.gz";
             sha256 = hashes.${system};
           };
 
-          sourceRoot = ".";
+          # cargo-dist tarballs unpack to a directory named after the archive
+          sourceRoot = "mailersend-${target}";
 
           installPhase = ''
             install -Dm755 mailersend $out/bin/mailersend
@@ -63,8 +64,10 @@
 
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            go
-            golangci-lint
+            cargo
+            rustc
+            rustfmt
+            clippy
             lefthook
           ];
         };
