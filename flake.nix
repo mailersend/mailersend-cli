@@ -20,10 +20,10 @@
 
       # SHA256 hashes for each platform (updated by CI on release)
       hashes = {
-        "x86_64-linux" = "sha256-0000000000000000000000000000000000000000000=";
-        "aarch64-linux" = "sha256-0000000000000000000000000000000000000000000=";
-        "x86_64-darwin" = "sha256-0000000000000000000000000000000000000000000=";
-        "aarch64-darwin" = "sha256-0000000000000000000000000000000000000000000=";
+        "x86_64-linux" = "sha256-Sh5tdOFrmiRGwkL/WsQq4vjSyYXgnZnj+53hF0cUkWw=";
+        "aarch64-linux" = "sha256-uif2wvP3lCHXo17kZRFzxQzy8UN71zDA8kcrDPdfeHk=";
+        "x86_64-darwin" = "sha256-EHOeqfEEF1ZgA+q7AhSK+buphUgeLnaziWfdlvL9Rew=";
+        "aarch64-darwin" = "sha256-1wNs99InY++Uu7TnNl34WxYup7YhiPeqyi9UuEoWL5U=";
       };
     in
     flake-utils.lib.eachDefaultSystem (system:
