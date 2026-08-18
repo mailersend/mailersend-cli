@@ -1,56 +1,70 @@
 # MailerSend CLI
 
-A command-line interface for the [MailerSend API](https://www.mailersend.com/). Send emails and SMS, manage domains, templates, webhooks, recipients, suppressions, and more — all from your terminal.
+A command-line interface and a TUI dashboard for the [MailerSend API](https://www.mailersend.com/). Use it to send emails and SMS, and to manage domains, templates, webhooks, recipients, and suppressions from the terminal.
 
 ## Installation
 
 ### Homebrew
 
 ```bash
-brew install --cask mailersend/tap/mailersend
+brew install mailersend/tap/mailersend
+```
+
+### Installer script
+
+macOS and Linux:
+
+```bash
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/mailersend/mailersend-cli/releases/latest/download/mailersend-installer.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/mailersend/mailersend-cli/releases/latest/download/mailersend-installer.ps1 | iex"
 ```
 
 ### GitHub Releases
 
-Download pre-built binaries for Linux, macOS, and Windows from the [releases page](https://github.com/mailersend/mailersend-cli/releases).
+Download binaries for Linux, macOS, and Windows from the [releases page](https://github.com/mailersend/mailersend-cli/releases).
 
-### Go install
+### Cargo
 
 ```bash
-go install github.com/mailersend/mailersend-cli@latest
+cargo install --git https://github.com/mailersend/mailersend-cli.git
 ```
 
 ### From source
 
-Requires Go 1.25+.
+Install a Rust toolchain from [rustup.rs](https://rustup.rs) first.
 
 ```bash
 git clone https://github.com/mailersend/mailersend-cli.git
 cd mailersend-cli
-go build -o mailersend .
+cargo build --release
 ```
 
-Move the binary to somewhere on your `$PATH`:
+Move the binary to a directory on your `$PATH`:
 
 ```bash
-sudo mv mailersend /usr/local/bin/
+sudo mv target/release/mailersend /usr/local/bin/
 ```
 
 ### Nix
 
-Run directly without installing:
+Run the CLI without installation:
 
 ```bash
 nix run git+ssh://git@github.com/mailersend/mailersend-cli.git
 ```
 
-Or install into your profile:
+Install the CLI into your profile:
 
 ```bash
 nix profile install git+ssh://git@github.com/mailersend/mailersend-cli.git
 ```
 
-Or add to a `flake.nix`:
+Or add the CLI to a `flake.nix`:
 
 ```nix
 {
@@ -61,7 +75,7 @@ Or add to a `flake.nix`:
 
 ## Authentication
 
-The CLI supports two authentication methods: **OAuth** (recommended) and **API token**.
+The CLI has two authentication methods: **OAuth** (recommended) and **API token**.
 
 ### OAuth (recommended)
 
@@ -69,7 +83,7 @@ The CLI supports two authentication methods: **OAuth** (recommended) and **API t
 mailersend auth login
 ```
 
-Running `mailersend auth login` opens your browser to authorize the CLI with your MailerSend account via OAuth. This is the default and recommended method — no need to manually create or paste tokens. OAuth tokens are automatically refreshed when they expire.
+The command opens the browser and authorizes the CLI with your MailerSend account. You do not create or paste tokens - the CLI does this for you. The CLI refreshes OAuth tokens automatically when they expire.
 
 ### API Token
 
@@ -79,11 +93,11 @@ You can also authenticate with an API token:
 mailersend auth login --method token
 ```
 
-You'll be prompted to enter your MailerSend API token. You can generate one from your [MailerSend dashboard](https://www.mailersend.com/) under API Tokens.
+The CLI asks for your MailerSend API token. Create a token in your [MailerSend dashboard](https://www.mailersend.com/) under API Tokens.
 
 ### Auth status and logout
 
-Check auth status:
+Show the authentication status:
 
 ```bash
 mailersend auth status
@@ -97,7 +111,7 @@ mailersend auth logout
 
 ### Multiple profiles
 
-You can manage multiple profiles:
+You can keep more than one profile:
 
 ```bash
 mailersend profile add --name staging
@@ -106,7 +120,7 @@ mailersend profile list
 mailersend profile switch staging
 ```
 
-Use a specific profile for a single command:
+Use a specific profile for one command:
 
 ```bash
 mailersend domain list --profile production
@@ -114,7 +128,7 @@ mailersend domain list --profile production
 
 ### Environment variable
 
-You can also set the API token via environment variable:
+You can also set the API token with an environment variable:
 
 ```bash
 export MAILERSEND_API_TOKEN="mlsn.your_token_here"
@@ -122,7 +136,7 @@ export MAILERSEND_API_TOKEN="mlsn.your_token_here"
 
 ## Global flags
 
-Every command supports these flags:
+Every command accepts these flags:
 
 | Flag | Description |
 |------|-------------|
@@ -130,6 +144,16 @@ Every command supports these flags:
 | `--verbose`, `-v` | Print HTTP request and response details |
 | `--profile <name>` | Use a specific auth profile |
 | `--help`, `-h` | Show help for any command |
+
+## Dashboard
+
+Start the interactive TUI dashboard:
+
+```bash
+mailersend dashboard
+```
+
+The dashboard gives you a lazygit-style interface with vim keybindings. Use the sidebar to move between domains, activity, analytics, messages, and suppressions. Press `?` for help. Press `q` to quit.
 
 ## Commands
 
@@ -188,7 +212,7 @@ mailersend bulk-email send --file emails.json
 mailersend bulk-email status <bulk_email_id>
 ```
 
-The JSON file should contain an array of email objects:
+The JSON file contains an array of email objects:
 
 ```json
 [
@@ -520,7 +544,7 @@ mailersend verification list list
 
 ### SMS
 
-> SMS commands require SMS to be enabled on your MailerSend account.
+> SMS commands need SMS enabled on your MailerSend account.
 
 #### Send SMS
 
@@ -589,11 +613,11 @@ mailersend sms webhook delete <webhook_id>
 
 ## Domain name resolution
 
-Any flag that accepts `--domain` will accept both a domain name (e.g. `yourdomain.com`) or a raw domain ID (e.g. `q3enl6kk0z042vwr`). When a domain name is provided, it is automatically resolved to the corresponding ID.
+Every flag that accepts `--domain` accepts a domain name (for example `yourdomain.com`) or a raw domain ID (for example `q3enl6kk0z042vwr`). The CLI resolves a domain name to the matching ID automatically.
 
 ## Shell completion
 
-Generate shell completions for your shell:
+Generate a completion script for your shell:
 
 ```bash
 # Bash
@@ -611,7 +635,7 @@ mailersend completion powershell | Out-String | Invoke-Expression
 
 ## JSON output
 
-Add `--json` to any command to get raw JSON output, useful for scripting:
+Add `--json` to a command to get raw JSON output. Use it in scripts:
 
 ```bash
 # Pipe to jq
