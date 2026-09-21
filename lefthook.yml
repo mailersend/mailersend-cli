@@ -7,3 +7,9 @@ pre-commit:
     lint:
       glob: "*.rs"
       run: cargo clippy --all-targets -- -D warnings
+
+remotes:
+  - git_url: git@github.com:mailerlite/git-hooks.git
+    ref: main
+    configs:
+      - gitleaks.yml
