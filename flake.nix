@@ -69,6 +69,7 @@
             rustfmt
             clippy
             lefthook
+            gitleaks
           ];
         };
       }
