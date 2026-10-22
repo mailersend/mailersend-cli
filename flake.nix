@@ -43,8 +43,21 @@
           # cargo-dist tarballs unpack to a directory named after the archive
           sourceRoot = "mailersend-${target}";
 
+          nativeBuildInputs = [ pkgs.installShellFiles ];
+
           installPhase = ''
+            runHook preInstall
             install -Dm755 mailersend $out/bin/mailersend
+            runHook postInstall
+          '';
+
+          # Only on darwin: the linux release binaries are not patched for Nix, so they
+          # cannot run in the build sandbox.
+          postInstall = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+            installShellCompletion --cmd mailersend \
+              --bash <($out/bin/mailersend completion bash) \
+              --fish <($out/bin/mailersend completion fish) \
+              --zsh <($out/bin/mailersend completion zsh)
           '';
 
           meta = with pkgs.lib; {
