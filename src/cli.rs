@@ -113,6 +113,11 @@ enum Command {
 }
 
 pub fn run() -> i32 {
+    // Dynamic completion (e.g. Thurm's Tab): `MAILERSEND_COMPLETE=fish mailersend -- mailersend <words>`
+    // prints the candidates and exits.
+    clap_complete::CompleteEnv::with_factory(Root::command)
+        .var("MAILERSEND_COMPLETE")
+        .complete();
     let root = Root::parse();
     let ctx = Ctx {
         profile: root.profile,
